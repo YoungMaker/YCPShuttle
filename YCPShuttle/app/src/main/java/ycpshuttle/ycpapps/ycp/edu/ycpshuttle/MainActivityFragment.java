@@ -11,6 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
 
     private TextView t;
+    private ArrayList<String> fakeData;
 
     public MainActivityFragment() {
     }
@@ -47,6 +50,22 @@ public class MainActivityFragment extends Fragment {
 
         View v= inflater.inflate(R.layout.fragment_main, container, false);
         t = (TextView) v.findViewById(R.id.output_text);
+
+        fakeData = new ArrayList<String>();
+        if(!Route.isInitalized()) {
+            Route.initalizeRoute();
+        }
+        ArrayList<Stop> stops = Route.getInstance().getStops();
+        for (Stop s : stops) {
+            fakeData.add(s.toString()); //TEMPORARY, fix
+        }
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_time_text, R.id.list_item_times, fakeData);
+
+        ListView list = (ListView) v.findViewById(R.id.wait_times_list);
+        list.setAdapter(adapter);
+
         return v;
     }
 
