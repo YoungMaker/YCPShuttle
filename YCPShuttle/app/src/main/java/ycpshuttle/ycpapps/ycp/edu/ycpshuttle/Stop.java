@@ -37,7 +37,7 @@ public class Stop {
     }
 
     public String toString() {
-        return id.toString() + "-  " + time + "  " + nextTime;
+        return id.toString() + "-  " + time + " min " + nextTime + " min";
     }
 
 }

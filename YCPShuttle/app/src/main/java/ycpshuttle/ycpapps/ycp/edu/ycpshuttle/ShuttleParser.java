@@ -15,7 +15,7 @@ import android.support.*;
 /**
  * Created by Aaron on 2/4/2016.
  */
-public class ShuttleParser extends AsyncTask<String, Void, ArrayList<String[]>> {
+public class ShuttleParser extends AsyncTask<String, Void, ArrayList<Stop>> {
         MainActivityFragment fragInstance;
 
         public ShuttleParser(MainActivityFragment frag ) {
@@ -23,41 +23,61 @@ public class ShuttleParser extends AsyncTask<String, Void, ArrayList<String[]>> 
         }
 
         @Override
-        protected ArrayList<String[]> doInBackground(String... uris) {
-            ArrayList output = new ArrayList<String[]>();
-            output.add(loadPage(103));
+        protected ArrayList<Stop> doInBackground(String... uris) {
+            ArrayList output = new ArrayList<Stop>();
+            if(!Route.isInitalized()) {
+                Route.initalizeRoute();
+            }
+            for(StopID id: StopID.values()) {
+                output.add(loadPage(id));
+            }
+
             return output;
+        }
+        @Override
+        protected void onPreExecute() {
+            fragInstance.editTextView("Loading Content");
+            //TODO: progress bar
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String[]> list){
-            String output ="";
-            for(String[] s : list) {
-                for(int i=0; i<s.length; i++) {
-                    if(s[i] != null) {
-                        output += s[i] + " , ";
-                    }
-                }
-                output+= "\n";
+        protected void onPostExecute(ArrayList<Stop> list){
+            if(!Route.isInitalized()) {
+                Route.initalizeRoute();
             }
-            fragInstance.editTextView(output);
+            try {
+                Route.getInstance().updateRoute(list);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            fragInstance.updateAdapter();
+            fragInstance.editTextView("Times Loaded");
         }
 
-        protected String[] loadPage(int pageID) {
-            String times[] = new String[10];
+
+        protected Stop loadPage(StopID stopID) {
+            String times[] = {"0", "0", "0", "0", "0", "0", "0", "0"};
+            String log = "";
             try {
-                Document doc = Jsoup.connect("https://ycpapps.ycp.edu/transit/gettimes.php?sid=" + pageID).get(); //loads html via http
-                Elements elements = doc.getElementsByTag("td");
+                Document doc = Jsoup.connect("https://ycpapps.ycp.edu/transit/gettimes.php?sid=" + stopID.getId()).get(); //loads html via http, TODO: use URI builder
+                Elements elements = doc.getElementsByAttributeValue("width", "80%");
                 for(int i=0; i<elements.size(); i++) {
                     String text =  elements.get(i).text();
-                    if(text.length() > 0 && !text.equals("Minutes")) {
+                    if(text.equalsIgnoreCase("Arriving")) {
+                        times[i] = "0";
+                        log +=  text + ", ";
+                    }
+                    else if(text.length() > 0 && !text.equalsIgnoreCase("minutes") && text != null) {
                         times[i] = text;
+                        //Log.d("PARSE_DATA", "" +  Integer.parseInt(text));
+                        log += text  + ", ";
                     }
                 }
+                Log.d("RETURN_DATA", log);
             }
             catch(IOException e) {
                 Log.e("IO_EXCEPTION", e.toString());
             }
-            return times;
+            return new Stop(stopID, Integer.parseInt(times[0]), Integer.parseInt(times[1]));
         }
 }

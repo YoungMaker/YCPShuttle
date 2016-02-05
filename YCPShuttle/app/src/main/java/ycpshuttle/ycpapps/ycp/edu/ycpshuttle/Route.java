@@ -46,7 +46,9 @@ public class Route {
         return -1;
     }
 
-    public void updateTimes() {
-
+    public void updateRoute(ArrayList<Stop> times) {
+        for(int i=0; i<times.size(); i++) {
+            stops.set(i, times.get(i));
+        }
     }
 }

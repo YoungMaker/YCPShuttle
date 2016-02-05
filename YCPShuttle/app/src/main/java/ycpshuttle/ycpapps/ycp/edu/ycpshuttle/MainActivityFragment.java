@@ -1,10 +1,8 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,11 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -29,7 +22,8 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
 
     private TextView t;
-    private ArrayList<String> fakeData;
+    private ArrayList<String> data;
+    private ArrayAdapter<String> adapter;
 
     public MainActivityFragment() {
     }
@@ -51,22 +45,26 @@ public class MainActivityFragment extends Fragment {
         View v= inflater.inflate(R.layout.fragment_main, container, false);
         t = (TextView) v.findViewById(R.id.output_text);
 
-        fakeData = new ArrayList<String>();
+        initializeAdapterData();
+        adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_time_text, R.id.list_item_times, data);
+
+        ListView list = (ListView) v.findViewById(R.id.wait_times_list);
+        list.setAdapter(adapter);
+
+        new ShuttleParser(this).execute("");
+        return v;
+    }
+
+    private void initializeAdapterData() {
+        data = new ArrayList<String>();
+
         if(!Route.isInitalized()) {
             Route.initalizeRoute();
         }
         ArrayList<Stop> stops = Route.getInstance().getStops();
         for (Stop s : stops) {
-            fakeData.add(s.toString()); //TEMPORARY, fix
+            data.add(s.toString()); //TEMPORARY, fix
         }
-
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_time_text, R.id.list_item_times, fakeData);
-
-        ListView list = (ListView) v.findViewById(R.id.wait_times_list);
-        list.setAdapter(adapter);
-
-        return v;
     }
 
     @Override
@@ -81,7 +79,7 @@ public class MainActivityFragment extends Fragment {
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
                     .authority("ycpapps.ycp.edu")
-                    .appendPath("transi")
+                    .appendPath("transit")
                     .appendPath("gettimes");
             String URL = builder.build().toString();
              new ShuttleParser(this).execute(URL);
@@ -96,5 +94,14 @@ public class MainActivityFragment extends Fragment {
     }
 
 
-
+    public void updateAdapter() {
+        if(!Route.isInitalized()) {
+            Route.initalizeRoute();
+        }
+        ArrayList<Stop> stops = Route.getInstance().getStops();
+        for (int i=0; i<stops.size(); i++) {
+            data.set(i, stops.get(i).toString()); //copies data back in from model when updated
+        }
+        adapter.notifyDataSetChanged();
+    }
 }
