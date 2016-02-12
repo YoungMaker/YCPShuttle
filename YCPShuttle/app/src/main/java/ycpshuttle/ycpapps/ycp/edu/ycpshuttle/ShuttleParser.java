@@ -79,7 +79,7 @@ public class ShuttleParser extends AsyncTask<String, Stop, ArrayList<Stop>> {
                             log += text + ", ";
                         }
                     }
-                    Log.d("RETURN_DATA", log);
+                   // Log.d("RETURN_DATA", log);
                 } else {
                     Log.e("NO_DATA", "No Shuttle Times for stop ID " + stopID.toString());
                     return new Stop(stopID, 0, 0, Error.NO_SHUTLE_TIMES);

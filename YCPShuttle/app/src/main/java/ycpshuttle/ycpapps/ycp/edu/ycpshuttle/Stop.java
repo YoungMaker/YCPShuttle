@@ -65,9 +65,9 @@ public class Stop {
         return nextTime;
     }
 
-    public String getNextArrivalTime() {
+    public String getNextArrivalTime() { //uses code from http://stackoverflow.com/questions/18734452/display-current-time-in-12-hour-format-with-am-pm
         GregorianCalendar c = new GregorianCalendar();
-        SimpleDateFormat fmt = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat fmt = new SimpleDateFormat("hh:mm a");
         c.add(Calendar.MINUTE, time);
         return fmt.format(c.getTime());
     }
