@@ -40,7 +40,7 @@ public class DetailActivity extends AppCompatActivity {
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri gmmIntentUri = Uri.parse("geo:39.949733,-76.733897?q=39.949733,-76.733897(Northside Commons)");
+                Uri gmmIntentUri = Uri.parse(s.getId().getGeoString());
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
