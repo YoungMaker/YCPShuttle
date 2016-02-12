@@ -23,13 +23,13 @@ public class NotifyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
          int v = super.onStartCommand(intent, flags, startId);
-        Log.v("Notify_Service flagged", "Service ran");
+        //Log.v("Notify_Service flagged", "Service ran");
         NotificationCompat.Builder mBuilder = //v4 notification builder
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_notify)
-                        .setContentTitle("Shuttle Arriving")
-                        .setContentText("A shuttle is arriving in 2 minutes");
-                mBuilder.setPriority(0);
+                        .setContentTitle("Shuttle Arriving Soon")
+                        .setContentText("A shuttle is arriving in less than 2 minutes");
+                mBuilder.setPriority(1);
                 mBuilder.setCategory(Notification.CATEGORY_ALARM);
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -47,6 +47,6 @@ public class NotifyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.v("Notify_Service created", "Created");
+        //Log.v("Notify_Service created", "Created");
     }
 }
