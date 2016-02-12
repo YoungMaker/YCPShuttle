@@ -36,6 +36,7 @@ public class DetailActivityFragment extends Fragment {
     private TextView arriveTime;
     private TextView arriveTime2;
     private Button track1;
+    private Button track2;
 
     public DetailActivityFragment() {
     }
@@ -44,7 +45,6 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_detail, container, false);
-        setHasOptionsMenu(true);
 
         Intent i = getActivity().getIntent();
         Log.v("STOP_ID", ""+ i.getIntExtra("ROUTE_STOP_REQUESTED", 0));
@@ -56,24 +56,36 @@ public class DetailActivityFragment extends Fragment {
         arriveTime = (TextView) v.findViewById(R.id.detail_arrival_time);
         arriveTime2 = (TextView) v.findViewById(R.id.detail_arrival_time2);
         track1 = (Button) v.findViewById(R.id.detail_track1);
+        track2 = (Button) v.findViewById(R.id.detail_track2);
         track1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setAlarmNotification();
-
+                setAlarmNotification(0);
             }
         });
+
+        track2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAlarmNotification(1);
+            }
+        });
+
         if(s.getErrorCode() == null) {
             arriveTime.setText(s.getArrivalTime());
             arriveTime2.setText(s.getNextArrivalTime());
             time1.setText("" + s.getTime() + " min");
             time2.setText("" + s.getNextTime() + " min");
+            track1.setEnabled(true);
+            track2.setEnabled(true);
         }
         else {
             arriveTime.setText(s.getErrorCode().toString());
             arriveTime2.setText(s.getErrorCode().toString());
             time1.setText("Error: ");
             time2.setText("Error: ");
+            track1.setEnabled(false);
+            track2.setEnabled(false);
         }
 
 
@@ -81,13 +93,22 @@ public class DetailActivityFragment extends Fragment {
         return v;
     }
 
-    private void setAlarmNotification() {
+    private void setAlarmNotification(int track) {
+        if(!canSetNotification(track)) { //error out if we cannot set a notification.
+            Toast.makeText(v.getContext(), "Error: Cannot track this shuttle ", Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlarmManager almMgr = (AlarmManager) getActivity().getSystemService(getActivity().ALARM_SERVICE);
         Intent intent = new Intent(getActivity().getApplicationContext(), NotifyService.class);
         PendingIntent pending = PendingIntent.getService(getActivity().getApplicationContext(), 0, intent, 0);
 
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.MINUTE, 1);
+        if(track == 0) {
+            calendar.add(Calendar.MINUTE, (s.getTime() - 2)); //first shuttle. Make the minutes behind a setting?
+        }
+        else {
+            calendar.add(Calendar.MINUTE, (s.getNextTime() - 2)); //next shuttle
+        }
         Log.v("API_LEVEL", Build.VERSION.SDK);
         if (Integer.valueOf(Build.VERSION.SDK) > 19) {
             almMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending); //exact timing > 19. Do we need this? I'll have to see. Battery intensive.
@@ -99,19 +120,18 @@ public class DetailActivityFragment extends Fragment {
         Toast.makeText(v.getContext(), "Alarm Set for " + fmt.format(calendar.getTime()), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            //getShuttleTimes();
+    public boolean canSetNotification(int track) { //pass in 1/2
+        if(s.getErrorCode() == null) {
+            if(track == 0 && s.getTime() == 0) {
+                return false;
+            }
+            else if(track >=1  && s.getTime() == 0) {
+                return false;
+            }
             return true;
         }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
+
+
 }
