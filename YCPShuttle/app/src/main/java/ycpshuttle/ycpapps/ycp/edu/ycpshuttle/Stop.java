@@ -68,13 +68,20 @@ public class Stop {
     public String getNextArrivalTime() { //uses code from http://stackoverflow.com/questions/18734452/display-current-time-in-12-hour-format-with-am-pm
         GregorianCalendar c = new GregorianCalendar();
         SimpleDateFormat fmt = new SimpleDateFormat("hh:mm a");
+        c.add(Calendar.MINUTE, nextTime);
+        return fmt.format(c.getTime());
+    }
+
+    public String getArrivalTime() { //uses code from http://stackoverflow.com/questions/18734452/display-current-time-in-12-hour-format-with-am-pm
+        GregorianCalendar c = new GregorianCalendar();
+        SimpleDateFormat fmt = new SimpleDateFormat("hh:mm a");
         c.add(Calendar.MINUTE, time);
         return fmt.format(c.getTime());
     }
 
 
     public String toString() {
-        return id.toString() + "-  " + time + " min " +"(" + getNextArrivalTime() + ") " + nextTime + " min";
+        return id.toString() + "-  " + time + " min, " + nextTime + " min";
     }
 
 }

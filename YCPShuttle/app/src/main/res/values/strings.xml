@@ -4,4 +4,8 @@
     <string name="action_refresh_text">Refresh</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="loading_indicator">Loading Content</string>
+    <string name="loading_indicator_sm">loading</string>
+    <string name="image_directions">click on the map for a more detailed view</string>
+    <string name="action_track_text">track this shuttle</string>
 </resources>
+

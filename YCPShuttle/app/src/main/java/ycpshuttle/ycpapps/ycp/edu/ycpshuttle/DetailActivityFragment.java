@@ -23,6 +23,7 @@ public class DetailActivityFragment extends Fragment {
     private TextView time1;
     private TextView time2;
     private TextView arriveTime;
+    private TextView arriveTime2;
 
     public DetailActivityFragment() {
     }
@@ -41,9 +42,11 @@ public class DetailActivityFragment extends Fragment {
         time1 = (TextView) v.findViewById(R.id.detail_time_text);
         time2 = (TextView) v.findViewById(R.id.detail_time2_text);
         arriveTime = (TextView) v.findViewById(R.id.detail_arrival_time);
+        arriveTime2 = (TextView) v.findViewById(R.id.detail_arrival_time2);
 
 
-        arriveTime.setText(s.getNextArrivalTime());
+        arriveTime.setText(s.getArrivalTime());
+        arriveTime2.setText(s.getNextArrivalTime());
         time1.setText("" + s.getTime() + " min");
         time2.setText("" + s.getNextTime() + " min");
 
