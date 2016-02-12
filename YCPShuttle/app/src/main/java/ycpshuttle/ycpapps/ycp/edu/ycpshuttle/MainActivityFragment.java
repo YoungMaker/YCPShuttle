@@ -1,5 +1,6 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -52,6 +54,14 @@ public class MainActivityFragment extends Fragment {
 
         ListView list = (ListView) v.findViewById(R.id.wait_times_list);
         list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent detailIntent= new Intent(adapter.getContext(), DetailActivity.class  );
+                detailIntent.putExtra("ROUTE_STOP_REQUESTED", position);
+                startActivity(detailIntent);
+            }
+        } );
 
 
         return v;
@@ -70,8 +80,8 @@ public class MainActivityFragment extends Fragment {
                 .appendPath("transit")
                 .appendPath("gettimes.php")
                 .appendQueryParameter("sid", "");
-                String URL = builder.build().toString();
-        Log.v("BUILT URL",URL);
+        String URL = builder.build().toString();
+        //Log.v("BUILT URL",URL);
         new ShuttleParser(this).execute(URL);
     }
 

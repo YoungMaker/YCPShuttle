@@ -7,7 +7,7 @@
             android:id="@+id/output_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Loading Content" />
+            android:text="@string/loading_indicator" />
 
         <ListView
             android:layout_width="match_parent"

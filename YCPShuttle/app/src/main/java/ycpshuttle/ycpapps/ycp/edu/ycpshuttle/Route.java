@@ -1,5 +1,7 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -34,6 +36,9 @@ public class Route {
         stops.add(stop);
     }
 
+    public Stop getStop(int index) {
+        return stops.get(index);
+    }
 
 
     public Route() { //fills with empty stops
@@ -57,6 +62,15 @@ public class Route {
                 return;
             }
         }
+    }
+
+    public Stop getStopByID(int id) { //DOESN"T WORK
+       for(Stop s: stops) {
+           //Log.v("STOP_ID_INT", ""+ s.getId().getId());
+           if(s.getId().getId() == id)
+               return s;
+       }
+        return null;
     }
 
 
