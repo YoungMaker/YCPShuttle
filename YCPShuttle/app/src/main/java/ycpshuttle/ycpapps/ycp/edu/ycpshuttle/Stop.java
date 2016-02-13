@@ -17,6 +17,10 @@ public class Stop {
     private int time; //time till next shuttle in minutes, 0 if arriving.
     private int nextTime; //time till shuttle after next.
 
+
+
+    private boolean isTracking = false;
+
     private Error errorCode;
 
     public Stop(StopID id) {
@@ -38,6 +42,14 @@ public class Stop {
         this.time = time;
         this.nextTime = nextTime;
         this.errorCode = error;
+    }
+
+    public boolean isTracking() {
+        return isTracking;
+    }
+
+    public void setIsTracking(boolean isTracking) {
+        this.isTracking = isTracking;
     }
 
     public Error getErrorCode() {

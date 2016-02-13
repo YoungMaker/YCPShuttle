@@ -33,6 +33,8 @@ public class DetailActivity extends AppCompatActivity {
 
         s = Route.getInstance().getStop(
                 getIntent().getIntExtra("ROUTE_STOP_REQUESTED", 0));
+//        s = new Stop(StopID.NSC, 3, 10); //TODO: REMOVE. THIS IS FOR WEEKEND DEBUG ONLY
+//        Route.getInstance().setStop(s);
 
         header.setText( s.getName());
         map = (ImageButton) findViewById(R.id.image_map);
