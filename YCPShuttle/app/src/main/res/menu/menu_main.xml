@@ -11,4 +11,13 @@
         android:id="@+id/action_refresh"
         android:title="@string/action_refresh_text"
         />
+    <item
+        android:id="@+id/action_sort_default"
+        android:title="@string/action_sort_default"
+        />
+    <item
+        android:id="@+id/action_sort_time"
+        android:title="@string/action_sort_time"
+        />
+
 </menu>

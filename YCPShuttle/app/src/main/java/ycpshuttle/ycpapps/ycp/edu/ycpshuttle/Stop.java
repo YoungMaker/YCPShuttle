@@ -1,6 +1,7 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
 import android.provider.CalendarContract;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -10,7 +11,7 @@ import java.util.GregorianCalendar;
 /**
  * Created by Aaron on 2/4/2016.
  */
-public class Stop {
+public class Stop implements Comparable<Stop> {
 
 
     private StopID id;
@@ -96,6 +97,32 @@ public class Stop {
         SimpleDateFormat fmt = new SimpleDateFormat("hh:mm a");
         c.add(Calendar.MINUTE, time);
         return c;
+    }
+
+    public int compareTo(Stop other) {
+        if(other.getTime() < this.getTime()) {
+            return 1;
+        }
+        else if(other.getTime() == this.getTime()) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    public int compareNum(Stop other) {
+
+        if(other.getId().getNum() < this.getId().getNum()) {
+
+            return 1;
+        }
+        else if(other.getId().getNum() == this.getId().getNum()) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
     }
 
 

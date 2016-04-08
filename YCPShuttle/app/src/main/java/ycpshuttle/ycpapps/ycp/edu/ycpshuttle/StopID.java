@@ -1,28 +1,34 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.location.Location;
+
 /**
  * Created by Aaron on 2/4/2016.
  */
 public enum StopID {
 
-    WOLF_TO_WEST(1100),
-    SPRING_GARDEN(101),
-    READCO(102),
-    RAIL_TRAIL(103),
-    GRUM(104),
-    WOLF_TO_CREEK(100),
-    CREEK(105),
-    NSC(106);
+
+    SPRING_GARDEN(101,1),
+    READCO(102,2),
+    RAIL_TRAIL(103,3),
+    GRUM(104,4),
+    WOLF_TO_CREEK(100,5),
+    CREEK(105,6),
+    NSC(106,7),
+    WOLF_TO_WEST(1100,8);
 
     private int id;
+    private int num;
 
-    StopID(int id) {
+    StopID(int id, int num) {
         this.id = id;
+        this.num = num;
     }
 
     public int getId() {
        return id;
     }
+    public int getNum() {return num;}
 
     public String toString() { //should these be XML string resources?
         int intId = this.getId();
@@ -70,6 +76,31 @@ public enum StopID {
             default:
                 return "geo:0,0?q=York+College+of+Pennsylvania";
         }
+    }
+
+    public Location getLocation() {
+        int intId = this.getId();
+        switch(intId) {
+            case 1100:
+
+            case 100:
+
+            case 101:
+
+            case 102:
+
+            case 103:
+
+            case 104:
+
+            case 105:
+
+            case 106:
+
+            default:
+
+        }
+        return null;
     }
 
     public boolean equals(StopID s) {

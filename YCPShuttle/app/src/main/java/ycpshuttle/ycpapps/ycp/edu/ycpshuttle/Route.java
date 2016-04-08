@@ -1,8 +1,10 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.location.Location;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Aaron on 2/4/2016.
@@ -49,9 +51,12 @@ public class Route {
         initalized = true;
     }
 
-    public int getDistanceToStop(Stop stop) {
-        //TODO: Implement route distance calculating
-        return -1;
+
+    public ArrayList<Stop> getStopsByTime() {
+        //todo: implement
+        ArrayList<Stop> output = getStops();
+        Collections.sort(output);
+        return output;
     }
 
     public void setStop(Stop stop) {

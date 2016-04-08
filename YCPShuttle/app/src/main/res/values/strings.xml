@@ -7,5 +7,8 @@
     <string name="loading_indicator_sm">loading</string>
     <string name="image_directions">click on the map for a more detailed view</string>
     <string name="action_track_text">track this shuttle</string>
+    <string name="action_sort_time">Sort by time</string>
+    <string name="action_sort_distance">Sort by distance</string>
+    <string name="action_sort_default">Default sort</string>
 </resources>
 

@@ -18,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 
 /**
@@ -52,16 +54,17 @@ public class MainActivityFragment extends Fragment {
 
         adapter = new ArrayAdapter<Stop>(getActivity(), R.layout.list_time_text, R.id.list_item_times, Route.getInstance().getStops());
 
+
         ListView list = (ListView) v.findViewById(R.id.wait_times_list);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent detailIntent= new Intent(adapter.getContext(), DetailActivity.class  );
+                Intent detailIntent = new Intent(adapter.getContext(), DetailActivity.class);
                 detailIntent.putExtra("ROUTE_STOP_REQUESTED", position);
                 startActivity(detailIntent);
             }
-        } );
+        });
 
 
         return v;
@@ -97,6 +100,24 @@ public class MainActivityFragment extends Fragment {
             getShuttleTimes();
             return true;
         }
+        else if(id == R.id.action_sort_time) {
+            adapter.sort(new Comparator<Stop>() {
+                @Override
+                public int compare(Stop lhs, Stop rhs) {
+                    return lhs.compareTo(rhs);
+                }
+            });
+            adapter.notifyDataSetChanged();
+        }
+        else if(id == R.id.action_sort_default) {
+            adapter.sort(new Comparator<Stop>() {
+                @Override
+                public int compare(Stop lhs, Stop rhs) {
+                    return lhs.compareNum(rhs);
+                }
+            });
+            adapter.notifyDataSetChanged();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -113,7 +134,10 @@ public class MainActivityFragment extends Fragment {
 
 
     public void refreshData() {
+
         adapter.notifyDataSetChanged();
+
+
     }
 
 
