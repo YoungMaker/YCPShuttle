@@ -118,6 +118,9 @@ public class MainActivityFragment extends Fragment {
             });
             adapter.notifyDataSetChanged();
         }
+        else if(id == R.id.action_sort_distance) {
+            //TODO: Sort by distance to latest GPS coordinate
+        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -99,7 +99,7 @@ public class Stop implements Comparable<Stop> {
         return c;
     }
 
-    public int compareTo(Stop other) {
+    public int compareTo(Stop other) { //sorting by time
         if(other.getTime() < this.getTime()) {
             return 1;
         }
@@ -111,7 +111,7 @@ public class Stop implements Comparable<Stop> {
         }
     }
 
-    public int compareNum(Stop other) {
+    public int compareNum(Stop other) { //default sorting
 
         if(other.getId().getNum() < this.getId().getNum()) {
 
