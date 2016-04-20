@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class DetailActivity extends AppCompatActivity {
 
     private TextView header;
@@ -37,6 +40,12 @@ public class DetailActivity extends AppCompatActivity {
 //        Route.getInstance().setStop(s);
 
         header.setText( s.getName());
+        TextView dist = (TextView)findViewById(R.id.disp_dist);
+        DecimalFormat f = new DecimalFormat("#.##");
+        f.setRoundingMode(RoundingMode.FLOOR);
+        dist.setText(f.format(s.getDistanceTo()) + "mi");
+
+
         map = (ImageButton) findViewById(R.id.image_map);
         map.setImageResource(getImage(s.getId().getId()));
 

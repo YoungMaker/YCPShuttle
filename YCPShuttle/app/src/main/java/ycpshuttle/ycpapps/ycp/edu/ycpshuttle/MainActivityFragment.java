@@ -25,6 +25,9 @@ import android.widget.Toast;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
 
 /**
@@ -57,8 +60,17 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         View v= inflater.inflate(R.layout.fragment_main, container, false);
         t = (TextView) v.findViewById(R.id.output_text);
 
-        adapter = new ArrayAdapter<Stop>(getActivity(), R.layout.list_time_text, R.id.list_item_times, Route.getInstance().getStops());
+//        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+//        for (Stop item : Route.getInstance().getStops()) {
+//            Map<String, String> datum = new HashMap<String, String>(2);
+//            datum.put("Times", item.toString());
+//            datum.put("Distance", "" + item.getDistanceTo());
+//            data.add(datum);
+//        }
 
+
+        adapter = new ArrayAdapter<Stop>(getActivity(), R.layout.list_time_text, R.id.list_item_times, Route.getInstance().getStops());
+        //adapter = new SimpleAdapter(getActivity(), data, R.layout.list_time_text, new String[] {"Times", "Distance"}, new int[] {R.id.list_item_times, R.id.list_item_sub});
 
         ListView list = (ListView) v.findViewById(R.id.wait_times_list);
         list.setAdapter(adapter);
@@ -70,7 +82,10 @@ public class MainActivityFragment extends Fragment implements LocationListener {
                 startActivity(detailIntent);
             }
         });
+        String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
 
+        locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
 
         return v;
     }
@@ -103,6 +118,11 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             getShuttleTimes();
+
+            String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+
+            locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
             return true;
         }
         else if(id == R.id.action_sort_time) {
@@ -128,11 +148,7 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         }
         else if(id == R.id.action_sort_distance) {
             //TODO: turn on location updates, until accuracy < 50m
-            String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
-
-            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
-
-            locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
+            sortByDistance();
         }
 
         return super.onOptionsItemSelected(item);

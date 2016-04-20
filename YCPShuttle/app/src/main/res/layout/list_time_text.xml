@@ -5,7 +5,7 @@
     android:weightSum="1">
 
     <TextView
-        android:minHeight="10dp"
+        android:minHeight="15dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Loading"
@@ -14,13 +14,13 @@
         android:layout_gravity="right"
         android:layout_width="match_parent" />
 
-    <TextView
+    <!--<TextView
         android:minHeight="5dp"
         android:layout_height="wrap_content"
-        android:text="Loading"
+        android:text=""
         android:id="@+id/list_item_sub"
         android:layout_weight="0.02"
         android:layout_gravity="right"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent" />!-->
 
 </LinearLayout>

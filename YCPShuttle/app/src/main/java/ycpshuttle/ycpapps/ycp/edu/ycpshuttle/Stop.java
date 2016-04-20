@@ -4,6 +4,8 @@ import android.location.Location;
 import android.provider.CalendarContract;
 import android.util.Log;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -103,8 +105,8 @@ public class Stop implements Comparable<Stop> {
     public double getDistanceTo() {
         Location cLoc = Route.getInstance().getCurrentLoc();
         Location stopLoc = getId().getLocation();
-        Log.v("locations", "cLoc " + cLoc.toString() + " stopLoc " + stopLoc.toString());
-        return cLoc.distanceTo(stopLoc);
+       // Log.v("locations", "cLoc " + cLoc.toString() + " stopLoc " + stopLoc.toString());
+        return ( cLoc.distanceTo(stopLoc) * 0.000621371); //convert meters to miles
     }
 
     public int compareTo(Stop other) { //sorting by time
@@ -147,7 +149,9 @@ public class Stop implements Comparable<Stop> {
 
 
     public String toString() {
-        return id.toString() + "-  " + time + " min, " + nextTime + " min";
+      DecimalFormat f = new DecimalFormat("#.##");
+        f.setRoundingMode(RoundingMode.FLOOR);
+        return id.toString() + "-  " + time + " min, " + nextTime + " min \n" + f.format(getDistanceTo())  + "mi";
     }
 
 }
