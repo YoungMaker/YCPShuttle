@@ -13,6 +13,7 @@ public class Route {
     private static Route r;
     private static boolean initalized = false;
     private ArrayList<Stop> stops;
+    private Location currentLoc = new Location("");
 
     public static boolean isInitalized() {
         return initalized;
@@ -42,6 +43,13 @@ public class Route {
         return stops.get(index);
     }
 
+    public Location getCurrentLoc() {
+        return currentLoc;
+    }
+
+    public void setCurrentLocation(Location loc) {
+        this.currentLoc = loc;
+    }
 
     public Route() { //fills with empty stops
         stops = new ArrayList<Stop>();

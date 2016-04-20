@@ -1,5 +1,6 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.location.Location;
 import android.provider.CalendarContract;
 import android.util.Log;
 
@@ -99,11 +100,30 @@ public class Stop implements Comparable<Stop> {
         return c;
     }
 
+    public double getDistanceTo() {
+        Location cLoc = Route.getInstance().getCurrentLoc();
+        Location stopLoc = getId().getLocation();
+        Log.v("locations", "cLoc " + cLoc.toString() + " stopLoc " + stopLoc.toString());
+        return cLoc.distanceTo(stopLoc);
+    }
+
     public int compareTo(Stop other) { //sorting by time
         if(other.getTime() < this.getTime()) {
             return 1;
         }
         else if(other.getTime() == this.getTime()) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    public int compareDistnace(Stop other) { //sorting by time
+        if(other.getDistanceTo() < this.getDistanceTo()) {
+            return 1;
+        }
+        else if(other.getDistanceTo() == this.getDistanceTo()) {
             return 0;
         }
         else {

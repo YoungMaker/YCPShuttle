@@ -1,6 +1,9 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -27,10 +30,12 @@ import java.util.Comparator;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LocationListener {
 
     private TextView t;
     private ArrayAdapter<Stop> adapter;
+
+    private int locSampleCount =0;
 
     public MainActivityFragment() {
     }
@@ -117,9 +122,17 @@ public class MainActivityFragment extends Fragment {
                 }
             });
             adapter.notifyDataSetChanged();
+
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+            locationManager.removeUpdates(this);
         }
         else if(id == R.id.action_sort_distance) {
-            //TODO: Sort by distance to latest GPS coordinate
+            //TODO: turn on location updates, until accuracy < 50m
+            String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
+
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+
+            locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
         }
 
         return super.onOptionsItemSelected(item);
@@ -135,6 +148,15 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
+    private void sortByDistance() {
+        adapter.sort(new Comparator<Stop>() {
+            @Override
+            public int compare(Stop lhs, Stop rhs) {
+                return lhs.compareDistnace(rhs);
+            }
+        });
+        adapter.notifyDataSetChanged();
+    }
 
     public void refreshData() {
 
@@ -144,5 +166,35 @@ public class MainActivityFragment extends Fragment {
     }
 
 
+    @Override
+    public void onLocationChanged(Location location) {
+        locSampleCount++;
+        Log.v("GPS ACCURACY", "Accuracy is:  " + location.getAccuracy());
+        if(location.getAccuracy() < 50) {
+            Log.v("GPS ACCURACY", "Accuracy is <50m:  " + location.getAccuracy());
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+            locationManager.removeUpdates(this); //stops GPS polling
+            Route.getInstance().setCurrentLocation(location);
+            sortByDistance(); //Sets Comparator
+        }
+        else if(locSampleCount > 10) { //stop
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+            locationManager.removeUpdates(this); //stops GPS polling
+        }
+    }
 
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }

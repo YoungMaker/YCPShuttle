@@ -80,27 +80,44 @@ public enum StopID {
 
     public Location getLocation() {
         int intId = this.getId();
+        Location loc = new Location("");
         switch(intId) {
             case 1100:
-
+                loc.setLatitude(39.945595);
+                loc.setLongitude(-76.730266);
+                break;
             case 100:
-
+                loc.setLatitude(39.945595);
+                loc.setLongitude(-76.730266);
+                break;
             case 101:
-
+                loc.setLatitude(39.942915);
+                loc.setLongitude(-76.738942);
+                break;
             case 102:
-
+                loc.setLatitude(39.944597);
+                loc.setLongitude(-76.739710);
+                break;
             case 103:
-
+                loc.setLatitude(39.947355);
+                loc.setLongitude(-76.737266);
+                break;
             case 104:
-
+                loc.setLatitude(39.945805);
+                loc.setLongitude(-76.735376);
+                break;
             case 105:
-
+                loc.setLatitude(39.947611);
+                loc.setLongitude(-76.727925);
+                break;
             case 106:
-
+                loc.setLatitude(39.949733);
+                loc.setLongitude(-76.733897);
+                break;
             default:
 
         }
-        return null;
+        return loc;
     }
 
     public boolean equals(StopID s) {
