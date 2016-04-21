@@ -1,3 +1,11 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="ycpshuttle.ycpapps.ycp.edu.ycpshuttle.DetailActivityFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -23,3 +31,13 @@
             android:id="@+id/wait_times_list" />
 
 </LinearLayout>
+
+<ProgressBar
+android:layout_width="50dp"
+android:layout_height="50dp"
+android:indeterminate="true"
+android:id="@+id/progress_bar"
+android:layout_centerVertical="true"
+android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

@@ -36,9 +36,8 @@ public class ShuttleParser extends AsyncTask<String, Stop, ArrayList<Stop>> {
             return output;
         }
         @Override
-        protected void onPreExecute() {
-            fragInstance.editTextView("Loading Content");
-            //TODO: progress bar
+        protected void onPreExecute(){
+
         }
 
     @Override
@@ -57,7 +56,7 @@ public class ShuttleParser extends AsyncTask<String, Stop, ArrayList<Stop>> {
 //                e.printStackTrace();
 //            }
             fragInstance.refreshData();
-            fragInstance.editTextView("Times Loaded");
+            fragInstance.setDone();
         }
 
 

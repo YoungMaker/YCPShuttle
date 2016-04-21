@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 
 
@@ -36,6 +37,7 @@ import java.util.List;
 public class MainActivityFragment extends Fragment implements LocationListener {
 
     private TextView t;
+    private ProgressBar b;
     private ArrayAdapter<Stop> adapter;
 
     private int locSampleCount =0;
@@ -59,7 +61,9 @@ public class MainActivityFragment extends Fragment implements LocationListener {
 
         View v= inflater.inflate(R.layout.fragment_main, container, false);
         t = (TextView) v.findViewById(R.id.output_text);
-
+        b = (ProgressBar) v.findViewById(R.id.progress_bar);
+        b.setScaleY(3f);
+        b.setScaleX(3f);
 //        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 //        for (Stop item : Route.getInstance().getStops()) {
 //            Map<String, String> datum = new HashMap<String, String>(2);
@@ -86,7 +90,8 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
 
         locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
-
+        //
+        // this.v = v;
         return v;
     }
 
@@ -123,6 +128,9 @@ public class MainActivityFragment extends Fragment implements LocationListener {
             LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
 
             locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
+
+            b.setVisibility(View.VISIBLE);
+            t.setText("Loading Content");
             return true;
         }
         else if(id == R.id.action_sort_time) {
@@ -154,8 +162,13 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         return super.onOptionsItemSelected(item);
     }
 
-    public void editTextView(String message) {
-        t.setText(message);
+//    public void editTextView(String message) {
+//        t.setText(message);
+//        b.setVisibility(View.GONE);
+//    }
+    public void setDone() {
+        t.setText("Times Loaded");
+        b.setVisibility(View.GONE);
     }
 
     public void popError(Stop s) {
@@ -213,4 +226,5 @@ public class MainActivityFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
 
     }
+
 }
