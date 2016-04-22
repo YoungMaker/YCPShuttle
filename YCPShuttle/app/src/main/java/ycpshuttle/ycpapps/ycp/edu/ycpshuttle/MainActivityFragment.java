@@ -1,12 +1,14 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
@@ -38,6 +41,9 @@ public class MainActivityFragment extends Fragment implements LocationListener {
 
     private TextView t;
     private ProgressBar b;
+    private RelativeLayout rel;
+    private SwipeRefreshLayout ref;
+    private ListView lv;
     private ArrayAdapter<Stop> adapter;
 
     private int locSampleCount =0;
@@ -62,8 +68,28 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         View v= inflater.inflate(R.layout.fragment_main, container, false);
         t = (TextView) v.findViewById(R.id.output_text);
         b = (ProgressBar) v.findViewById(R.id.progress_bar);
-        b.setScaleY(3f);
-        b.setScaleX(3f);
+        rel = (RelativeLayout) v.findViewById(R.id.main_layout);
+        lv = (ListView) v.findViewById(R.id.wait_times_list);
+        ref = (SwipeRefreshLayout) v.findViewById(R.id.swipe_layout);
+
+        ref.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        getShuttleTimes();
+                        setLoading();
+                    }
+                }
+        );
+
+//        ref.setColorSchemeColors(0,0,0,0);
+//        ref.setProgressBackgroundColor(android.R.color.transparent);
+
+        b.setScaleY(2f);
+        b.setScaleX(2f);
+
+        setLoading();
+
 //        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 //        for (Stop item : Route.getInstance().getStops()) {
 //            Map<String, String> datum = new HashMap<String, String>(2);
@@ -92,13 +118,17 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
         //
         // this.v = v;
+
+        getShuttleTimes();
+        setLoading();
         return v;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getShuttleTimes();
+       // getShuttleTimes();
+       // setLoading();
     }
 
     private void getShuttleTimes() {
@@ -129,8 +159,7 @@ public class MainActivityFragment extends Fragment implements LocationListener {
 
             locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
 
-            b.setVisibility(View.VISIBLE);
-            t.setText("Loading Content");
+            setLoading();
             return true;
         }
         else if(id == R.id.action_sort_time) {
@@ -169,6 +198,23 @@ public class MainActivityFragment extends Fragment implements LocationListener {
     public void setDone() {
         t.setText("Times Loaded");
         b.setVisibility(View.GONE);
+        rel.setBackgroundColor(Color.TRANSPARENT);
+        setEnabled(true);
+        ref.setRefreshing(false);
+        ref.setEnabled(true);
+    }
+
+    public void setLoading()
+    {
+        t.setText("Loading content");
+        b.setVisibility(View.VISIBLE);
+        rel.setBackgroundColor(Color.argb(204, 83, 83, 83));
+        setEnabled(false);
+        ref.setEnabled(false);
+    }
+
+    public void setEnabled(boolean enable) {
+        lv.setEnabled(enable);
     }
 
     public void popError(Stop s) {

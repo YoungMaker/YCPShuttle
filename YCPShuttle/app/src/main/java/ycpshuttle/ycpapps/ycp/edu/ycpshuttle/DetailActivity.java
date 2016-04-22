@@ -36,14 +36,20 @@ public class DetailActivity extends AppCompatActivity {
 
         s = Route.getInstance().getStop(
                 getIntent().getIntExtra("ROUTE_STOP_REQUESTED", 0));
-//        s = new Stop(StopID.NSC, 3, 10); //TODO: REMOVE. THIS IS FOR WEEKEND DEBUG ONLY
+//        s = new Stop(StopID.NSC, 3, 10); //TODO THIS IS FOR WEEKEND DEBUG ONLY
 //        Route.getInstance().setStop(s);
 
         header.setText( s.getName());
         TextView dist = (TextView)findViewById(R.id.disp_dist);
         DecimalFormat f = new DecimalFormat("#.##");
         f.setRoundingMode(RoundingMode.FLOOR);
-        dist.setText(f.format(s.getDistanceTo()) + "mi");
+
+        if(Route.getInstance().getCurrentLoc().getLatitude() == 0.00 && Route.getInstance().getCurrentLoc().getLongitude() == 0.00) {
+            dist.setText("");
+        }
+        else {
+            dist.setText(f.format(s.getDistanceTo()) + " miles from your location");
+        }
 
 
         map = (ImageButton) findViewById(R.id.image_map);

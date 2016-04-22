@@ -151,6 +151,9 @@ public class Stop implements Comparable<Stop> {
     public String toString() {
       DecimalFormat f = new DecimalFormat("#.##");
         f.setRoundingMode(RoundingMode.FLOOR);
+        if(Route.getInstance().getCurrentLoc().getLatitude() == 0.00 && Route.getInstance().getCurrentLoc().getLongitude() == 0.00) {
+            return id.toString() + "-  " + time + " min, " + nextTime + " min \n --.- mi";
+        }
         return id.toString() + "-  " + time + " min, " + nextTime + " min \n" + f.format(getDistanceTo())  + "mi";
     }
 
