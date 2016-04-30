@@ -1,5 +1,6 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -39,6 +40,7 @@ import java.util.List;
  */
 public class MainActivityFragment extends Fragment implements LocationListener {
 
+    private Activity mainActivity;
     private TextView t;
     private ProgressBar b;
     private RelativeLayout rel;
@@ -88,8 +90,6 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         b.setScaleY(2f);
         b.setScaleX(2f);
 
-        setLoading();
-
 //        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 //        for (Stop item : Route.getInstance().getStops()) {
 //            Map<String, String> datum = new HashMap<String, String>(2);
@@ -100,7 +100,7 @@ public class MainActivityFragment extends Fragment implements LocationListener {
 
 
         adapter = new ArrayAdapter<Stop>(getActivity(), R.layout.list_time_text, R.id.list_item_times, Route.getInstance().getStops());
-        //adapter = new SimpleAdapter(getActivity(), data, R.layout.list_time_text, new String[] {"Times", "Distance"}, new int[] {R.id.list_item_times, R.id.list_item_sub});
+        //adapter = new SimpleAdapter(getActivity(), data, R.layout.list_time_text, new String[] {"Times", "Distance"}, new int[] {R.id.list_item_times, R.id.list_item_sub}); //tried to use simple adapter
 
         ListView list = (ListView) v.findViewById(R.id.wait_times_list);
         list.setAdapter(adapter);
@@ -112,8 +112,15 @@ public class MainActivityFragment extends Fragment implements LocationListener {
                 startActivity(detailIntent);
             }
         });
+
+        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
 
         locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
         //
@@ -121,14 +128,12 @@ public class MainActivityFragment extends Fragment implements LocationListener {
 
         getShuttleTimes();
         setLoading();
-        return v;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-       // getShuttleTimes();
-       // setLoading();
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mainActivity = activity;
     }
 
     private void getShuttleTimes() {
@@ -155,7 +160,7 @@ public class MainActivityFragment extends Fragment implements LocationListener {
             getShuttleTimes();
 
             String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
-            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
 
             locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
 
@@ -180,7 +185,7 @@ public class MainActivityFragment extends Fragment implements LocationListener {
             });
             adapter.notifyDataSetChanged();
 
-            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
             locationManager.removeUpdates(this);
         }
         else if(id == R.id.action_sort_distance) {
@@ -247,13 +252,13 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         Log.v("GPS ACCURACY", "Accuracy is:  " + location.getAccuracy());
         if(location.getAccuracy() < 50) {
             Log.v("GPS ACCURACY", "Accuracy is <50m:  " + location.getAccuracy());
-            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
             locationManager.removeUpdates(this); //stops GPS polling
             Route.getInstance().setCurrentLocation(location);
             sortByDistance(); //Sets Comparator
         }
         else if(locSampleCount > 10) { //stop
-            LocationManager locationManager = (LocationManager) getActivity().getSystemService(adapter.getContext().LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
             locationManager.removeUpdates(this); //stops GPS polling
         }
     }
