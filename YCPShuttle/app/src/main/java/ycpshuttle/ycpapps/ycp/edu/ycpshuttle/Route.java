@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Aaron on 2/4/2016.
@@ -14,6 +15,16 @@ public class Route {
     private static boolean initalized = false;
     private ArrayList<Stop> stops;
     private Location currentLoc = new Location("");
+
+    public GregorianCalendar getLastLoadedTime() {
+        return lastLoadedTime;
+    }
+
+    public void setLastLoadedTime(GregorianCalendar lastLoadedTime) {
+        this.lastLoadedTime = lastLoadedTime;
+    }
+
+    private GregorianCalendar lastLoadedTime = new GregorianCalendar(1970,0,0);
 
     public static boolean isInitalized() {
         return initalized;

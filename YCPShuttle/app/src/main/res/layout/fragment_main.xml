@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:background="#cc535353"
     android:id="@+id/main_layout"
     >
 
@@ -16,6 +15,7 @@ android:indeterminate="true"
 android:id="@+id/progress_bar"
 android:layout_centerVertical="true"
 android:layout_centerHorizontal="true"
+    android:visibility="gone"
     />
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

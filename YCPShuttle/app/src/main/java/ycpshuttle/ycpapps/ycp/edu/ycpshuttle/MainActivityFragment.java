@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -26,10 +24,19 @@ import android.widget.Toast;
 import android.widget.ProgressBar;
 
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -38,7 +45,9 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements LocationListener {
+public class MainActivityFragment extends Fragment implements LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private Activity mainActivity;
     private TextView t;
@@ -48,7 +57,10 @@ public class MainActivityFragment extends Fragment implements LocationListener {
     private ListView lv;
     private ArrayAdapter<Stop> adapter;
 
-    private int locSampleCount =0;
+
+    private GoogleApiClient mGoogleApiClient;
+
+    private int locSampleCount =0; //counts location samples so that when they exceed 10 it quits trying.
 
     public MainActivityFragment() {
     }
@@ -78,17 +90,20 @@ public class MainActivityFragment extends Fragment implements LocationListener {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
+                        if(mGoogleApiClient.isConnected()) {
+                            beginLocationUpdates();
+                        }
+                        else {
+                            mGoogleApiClient.connect();
+                        }
                         getShuttleTimes();
                         setLoading();
                     }
                 }
         );
 
-//        ref.setColorSchemeColors(0,0,0,0);
-//        ref.setProgressBackgroundColor(android.R.color.transparent);
-
-        b.setScaleY(2f);
-        b.setScaleX(2f);
+        b.setScaleY(1.5f);
+        b.setScaleX(1.5f); //scales loading spinner
 
 //        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 //        for (Stop item : Route.getInstance().getStops()) {
@@ -119,15 +134,39 @@ public class MainActivityFragment extends Fragment implements LocationListener {
     @Override
     public void onStart() {
         super.onStart();
-        String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
-        LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
+//        String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
+//        String locationProdiver = LocationManager.NETWORK_PROVIDER;
+//        LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
 
-        locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
-        //
-        // this.v = v;
+       // locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
+        mGoogleApiClient = new GoogleApiClient.Builder(adapter.getContext())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
-        getShuttleTimes();
-        setLoading();
+
+        GregorianCalendar cTime = new GregorianCalendar();
+        long elapsedMins = (( (cTime.getTimeInMillis() - Route.getInstance().getLastLoadedTime().getTimeInMillis())/1000)/60);
+        Log.v("Elapsed minutes ", "" + elapsedMins);
+        if(elapsedMins >= 2) {
+            mGoogleApiClient.connect();
+            getShuttleTimes();
+            setLoading();
+        }
+    }
+
+    public void beginLocationUpdates() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(250);
+        mLocationRequest.setFastestInterval(100);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY); //ballanced power/accuracy
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    public void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
     @Override
@@ -159,10 +198,16 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         if (id == R.id.action_refresh) {
             getShuttleTimes();
 
-            String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
-            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
-
-            locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
+//            String locationProvider = LocationManager.GPS_PROVIDER; //USES GPS for now, network selection for later
+//            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
+//
+//            locationManager.requestLocationUpdates(locationProvider, 200, 10, this);
+            if(mGoogleApiClient.isConnected()) {
+                beginLocationUpdates();
+            }
+            else {
+                mGoogleApiClient.connect();
+            }
 
             setLoading();
             return true;
@@ -185,8 +230,9 @@ public class MainActivityFragment extends Fragment implements LocationListener {
             });
             adapter.notifyDataSetChanged();
 
-            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
-            locationManager.removeUpdates(this);
+//            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
+//            locationManager.removeUpdates(this);
+            stopLocationUpdates();
         }
         else if(id == R.id.action_sort_distance) {
             //TODO: turn on location updates, until accuracy < 50m
@@ -207,6 +253,8 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         setEnabled(true);
         ref.setRefreshing(false);
         ref.setEnabled(true);
+
+        Route.getInstance().setLastLoadedTime(new GregorianCalendar());
     }
 
     public void setLoading()
@@ -226,6 +274,9 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         if(s.getErrorCode() != null) {
             Toast.makeText(adapter.getContext(), "Error: " +  s.getErrorCode().toString() + " on stop " + s.getName(), Toast.LENGTH_SHORT).show();
         }
+    }
+    public void popLocError(String err) {
+        Toast.makeText(adapter.getContext(), "Error: " +  err + " when setting up location services", Toast.LENGTH_SHORT).show();
     }
 
     private void sortByDistance() {
@@ -252,30 +303,45 @@ public class MainActivityFragment extends Fragment implements LocationListener {
         Log.v("GPS ACCURACY", "Accuracy is:  " + location.getAccuracy());
         if(location.getAccuracy() < 50) {
             Log.v("GPS ACCURACY", "Accuracy is <50m:  " + location.getAccuracy());
-            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
-            locationManager.removeUpdates(this); //stops GPS polling
+//            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
+//            locationManager.removeUpdates(this); //stops GPS polling
+            stopLocationUpdates();
             Route.getInstance().setCurrentLocation(location);
             sortByDistance(); //Sets Comparator
         }
         else if(locSampleCount > 10) { //stop
-            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
-            locationManager.removeUpdates(this); //stops GPS polling
+//            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
+//            locationManager.removeUpdates(this); //stops GPS polling
+            stopLocationUpdates();
         }
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mGoogleApiClient.isConnected()) {
+            stopLocationUpdates(); //pauses location updates
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
-    public void onProviderEnabled(String provider) {
-
+    public void onConnected(Bundle bundle) {
+        Log.v("API connection","Connected to API");
+        beginLocationUpdates();
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
-
+    public void onConnectionSuspended(int i) {
+        popLocError("connection suspended");
     }
 
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        popLocError("connection failed");
+    }
 }
