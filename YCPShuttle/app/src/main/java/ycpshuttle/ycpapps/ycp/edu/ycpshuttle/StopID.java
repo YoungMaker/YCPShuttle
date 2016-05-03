@@ -44,7 +44,7 @@ public enum StopID {
             case 103:
                 return "Rail Trail Lot";
             case 104:
-                return "Grumbacher/Dhiel Lot";
+                return "Grumbacher/Diehl Lot";
             case 105:
                 return "Creek Crossing";
             case 106:
