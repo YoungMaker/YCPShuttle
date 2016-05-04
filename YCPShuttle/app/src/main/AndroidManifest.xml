@@ -3,7 +3,8 @@
     package="ycpshuttle.ycpapps.ycp.edu.ycpshuttle">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -11,8 +12,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -32,6 +31,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ycpshuttle.ycpapps.ycp.edu.ycpshuttle.MainActivity" />
         </activity>
+
+        <service
+            android:name=".NotifyService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

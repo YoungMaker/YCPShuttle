@@ -2,13 +2,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ycpshuttle.ycpapps.ycp.edu.ycpshuttle.MainActivity">
-    <item
+    <!--<item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never" />!-->
     <item
         android:id="@+id/action_refresh"
         android:title="@string/action_refresh_text"
         />
+    <item
+        android:id="@+id/action_sort_default"
+        android:title="@string/action_sort_default"
+        />
+    <item
+        android:id="@+id/action_sort_time"
+        android:title="@string/action_sort_time"
+        />
+    <item
+        android:id="@+id/action_sort_distance"
+        android:title="@string/action_sort_distance"
+        />
+
 </menu>

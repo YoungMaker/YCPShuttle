@@ -1,7 +1,11 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.location.Location;
 import android.provider.CalendarContract;
+import android.util.Log;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,12 +14,16 @@ import java.util.GregorianCalendar;
 /**
  * Created by Aaron on 2/4/2016.
  */
-public class Stop {
+public class Stop implements Comparable<Stop> {
 
 
     private StopID id;
     private int time; //time till next shuttle in minutes, 0 if arriving.
     private int nextTime; //time till shuttle after next.
+
+
+
+    private boolean isTracking = false;
 
     private Error errorCode;
 
@@ -38,6 +46,14 @@ public class Stop {
         this.time = time;
         this.nextTime = nextTime;
         this.errorCode = error;
+    }
+
+    public boolean isTracking() {
+        return isTracking;
+    }
+
+    public void setIsTracking(boolean isTracking) {
+        this.isTracking = isTracking;
     }
 
     public Error getErrorCode() {
@@ -79,9 +95,66 @@ public class Stop {
         return fmt.format(c.getTime());
     }
 
+    public GregorianCalendar getCalendarArrivalTime() { //uses code from http://stackoverflow.com/questions/18734452/display-current-time-in-12-hour-format-with-am-pm
+        GregorianCalendar c = new GregorianCalendar();
+        SimpleDateFormat fmt = new SimpleDateFormat("hh:mm a");
+        c.add(Calendar.MINUTE, time);
+        return c;
+    }
+
+    public double getDistanceTo() {
+        Location cLoc = Route.getInstance().getCurrentLoc();
+        Location stopLoc = getId().getLocation();
+       // Log.v("locations", "cLoc " + cLoc.toString() + " stopLoc " + stopLoc.toString());
+        return ( cLoc.distanceTo(stopLoc) * 0.000621371); //convert meters to miles
+    }
+
+    public int compareTo(Stop other) { //sorting by time
+        if(other.getTime() < this.getTime()) {
+            return 1;
+        }
+        else if(other.getTime() == this.getTime()) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    public int compareDistnace(Stop other) { //sorting by time
+        if(other.getDistanceTo() < this.getDistanceTo()) {
+            return 1;
+        }
+        else if(other.getDistanceTo() == this.getDistanceTo()) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    public int compareNum(Stop other) { //default sorting
+
+        if(other.getId().getNum() < this.getId().getNum()) {
+
+            return 1;
+        }
+        else if(other.getId().getNum() == this.getId().getNum()) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+
 
     public String toString() {
-        return id.toString() + "-  " + time + " min, " + nextTime + " min";
+      DecimalFormat f = new DecimalFormat("#.##");
+        f.setRoundingMode(RoundingMode.FLOOR);
+        if(Route.getInstance().getCurrentLoc().getLatitude() == 0.00 && Route.getInstance().getCurrentLoc().getLongitude() == 0.00) {
+            return id.toString() + "-  " + time + " min, " + nextTime + " min \n --.- mi";
+        }
+        return id.toString() + "-  " + time + " min, " + nextTime + " min \n" + f.format(getDistanceTo())  + "mi";
     }
 
 }

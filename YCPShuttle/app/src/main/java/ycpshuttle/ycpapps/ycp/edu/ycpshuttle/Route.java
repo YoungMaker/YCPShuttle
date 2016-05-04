@@ -1,8 +1,11 @@
 package ycpshuttle.ycpapps.ycp.edu.ycpshuttle;
 
+import android.location.Location;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Aaron on 2/4/2016.
@@ -11,6 +14,17 @@ public class Route {
     private static Route r;
     private static boolean initalized = false;
     private ArrayList<Stop> stops;
+    private Location currentLoc = new Location("");
+
+    public GregorianCalendar getLastLoadedTime() {
+        return lastLoadedTime;
+    }
+
+    public void setLastLoadedTime(GregorianCalendar lastLoadedTime) {
+        this.lastLoadedTime = lastLoadedTime;
+    }
+
+    private GregorianCalendar lastLoadedTime = new GregorianCalendar(1970,0,0);
 
     public static boolean isInitalized() {
         return initalized;
@@ -40,6 +54,13 @@ public class Route {
         return stops.get(index);
     }
 
+    public Location getCurrentLoc() {
+        return currentLoc;
+    }
+
+    public void setCurrentLocation(Location loc) {
+        this.currentLoc = loc;
+    }
 
     public Route() { //fills with empty stops
         stops = new ArrayList<Stop>();
@@ -49,9 +70,12 @@ public class Route {
         initalized = true;
     }
 
-    public int getDistanceToStop(Stop stop) {
-        //TODO: Implement route distance calculating
-        return -1;
+
+    public ArrayList<Stop> getStopsByTime() {
+        //todo: implement
+        ArrayList<Stop> output = getStops();
+        Collections.sort(output);
+        return output;
     }
 
     public void setStop(Stop stop) {

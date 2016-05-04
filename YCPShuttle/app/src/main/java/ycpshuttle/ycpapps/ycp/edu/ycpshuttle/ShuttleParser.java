@@ -36,9 +36,8 @@ public class ShuttleParser extends AsyncTask<String, Stop, ArrayList<Stop>> {
             return output;
         }
         @Override
-        protected void onPreExecute() {
-            fragInstance.editTextView("Loading Content");
-            //TODO: progress bar
+        protected void onPreExecute(){
+
         }
 
     @Override
@@ -57,7 +56,7 @@ public class ShuttleParser extends AsyncTask<String, Stop, ArrayList<Stop>> {
 //                e.printStackTrace();
 //            }
             fragInstance.refreshData();
-            fragInstance.editTextView("Times Loaded");
+            fragInstance.setDone();
         }
 
 
@@ -65,7 +64,7 @@ public class ShuttleParser extends AsyncTask<String, Stop, ArrayList<Stop>> {
             String times[] = {"0", "0", "0", "0", "0", "0", "0", "0"};
             String log = "";
             try {
-                Document doc = Jsoup.connect(URL + stopID.getId()).get(); //loads html via http, TODO: use URI builder
+                Document doc = Jsoup.connect(URL + stopID.getId()).timeout(5000).get(); //loads html via http,
                 Elements elements = doc.getElementsByAttributeValue("width", "80%");
                 if (elements.size() > 0) {
                     for (int i = 0; i < elements.size(); i++) {

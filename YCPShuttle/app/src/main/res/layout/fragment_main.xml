@@ -1,17 +1,55 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="ycpshuttle.ycpapps.ycp.edu.ycpshuttle.DetailActivityFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:id="@+id/main_layout"
+    >
 
-        <TextView
-            android:id="@+id/output_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/loading_indicator" />
+<ProgressBar
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:indeterminate="true"
+android:id="@+id/progress_bar"
+android:layout_centerVertical="true"
+android:layout_centerHorizontal="true"
+    android:visibility="gone"
+    />
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/wait_times_list" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
 
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:src="@drawable/logo_ycp"
+
+    />
+
+<TextView
+    android:id="@+id/output_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/loading_indicator"
+    android:layout_gravity="center_horizontal" />
+
+<android.support.v4.widget.SwipeRefreshLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/swipe_layout"
+    >
+
+<ListView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/wait_times_list" />
+
+</android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
+
+
+</RelativeLayout>
