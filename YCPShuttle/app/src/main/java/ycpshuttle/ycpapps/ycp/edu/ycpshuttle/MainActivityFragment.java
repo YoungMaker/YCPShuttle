@@ -232,7 +232,10 @@ public class MainActivityFragment extends Fragment implements LocationListener,
 
 //            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
 //            locationManager.removeUpdates(this);
-            stopLocationUpdates();
+            if(mGoogleApiClient.isConnected()) {
+                stopLocationUpdates();
+            }
+
         }
         else if(id == R.id.action_sort_distance) {
             //TODO: turn on location updates, until accuracy < 50m
