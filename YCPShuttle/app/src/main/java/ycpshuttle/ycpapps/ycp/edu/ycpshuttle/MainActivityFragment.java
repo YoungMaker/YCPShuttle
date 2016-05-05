@@ -309,6 +309,7 @@ public class MainActivityFragment extends Fragment implements LocationListener,
 //            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
 //            locationManager.removeUpdates(this); //stops GPS polling
             stopLocationUpdates();
+            mGoogleApiClient.disconnect(); //no longer using API connection, close the connection.
             Route.getInstance().setCurrentLocation(location);
             sortByDistance(); //Sets Comparator
         }
@@ -316,6 +317,7 @@ public class MainActivityFragment extends Fragment implements LocationListener,
 //            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(adapter.getContext().LOCATION_SERVICE);
 //            locationManager.removeUpdates(this); //stops GPS polling
             stopLocationUpdates();
+            mGoogleApiClient.disconnect(); //no longer using API connection, close the connection.
         }
     }
 
@@ -330,6 +332,11 @@ public class MainActivityFragment extends Fragment implements LocationListener,
     @Override
     public void onResume() {
         super.onResume();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     @Override
